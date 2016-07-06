@@ -1,2 +1,6 @@
 ---
-# vars file for role-filebeat
+# vars file for role-filebeats
+filebeats_gpg_key: https://packages.elastic.co/GPG-KEY-elasticsearch
+filebeats_baseurl: https://packages.elastic.co/beats/yum/el/$basearch
+filebeats_repo_name: filebeats.repo
+filebeats_pkg_name: filebeat
