@@ -2,4 +2,4 @@
 
 - hosts: ELASTIC
   roles:
-   - { role: role-filebeat }
+   - { role: role-filebeat, elk_server_private_ip: localhost }

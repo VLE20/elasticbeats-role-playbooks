@@ -16,14 +16,52 @@
     key: "{{ elasticsearch_rpm_key }}"
   become: yes
   
-- name: Creating a new yum repository file for logstash
+- name: Creating a new yum repository file for elastic-beats
   template:
-    src: beats.repo.j2
-    dest: "/etc/yum.repos.d/{{ beats_repo_name }}"
+    src: elastic-beats.repo.j2
+    dest: "/etc/yum.repos.d/{{ elasticbeats_repo_name }}"
   become: yes
   
-- name: Installing beats pkg from repo
+- name: Installing filebeat pkg from repo
   yum: 
-    name: "{{ beats_pkg_name }}"
+    name: "{{ filebeat_pkg_name }}"
     state: present
+  become: yes
+
+- name: Configure filebeat
+  template:
+    src: filebeat.yml.j2
+    dest: "/etc/filebeat/filebeat.yml"
+  become: yes
+
+- name: Create log path if not exist
+  file: 
+    path: "{{ filebeat_log_path }}"
+    owner: root
+    group: root
+    state: directory
+    mode: 0775
+  become: yes  
+  
+- name: Configure filebeat-service
+  template:
+    src: filebeat.service.j2
+    dest: "/lib/systemd/system/{{ filebeat_service }}"
+  become: yes
+  
+- name: Reload systemctl
+  command: systemctl daemon-reload
+  become: yes
+  
+- name: Logrotate configuration file
+  template:
+    src: logrotate.filebeat.j2
+    dest: /etc/logrotate.d/filebeat
+  become: yes  
+
+- name: Restart filebeat
+  service:
+    name: "{{ filebeat_service_name }}"
+    state: restarted 
+    enabled: yes
   become: yes
