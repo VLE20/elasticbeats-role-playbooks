@@ -1,0 +1,5 @@
+---
+
+- hosts: ELASTIC
+  roles:
+   - { role: role-filebeat }
