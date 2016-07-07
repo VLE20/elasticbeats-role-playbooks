@@ -1,2 +1,3 @@
 ---
 # defaults file for role-filebeat
+filebeat_log_path: /var/log/filebeat-rotate
