@@ -1,0 +1,3 @@
+---
+# tasks file for role-topbeat
+- include: topbeat-install.yml

@@ -1,0 +1,66 @@
+---
+
+- name: Checking if ansible_distribution_major_version and ansible_distribution are not defined
+  fail:
+    msg: "Ansible distribution or ansible distribution version are not defined"
+  when: ansible_distribution_major_version is not defined or ansible_distribution is not defined
+
+- name: Checking if target server is not CentOS 7
+  fail:
+    msg: "This role can only be run on CentOS 7 servers"
+  when: ansible_distribution != "CentOS" or (ansible_distribution == "CentOS" and ansible_distribution_major_version != "7")
+
+- name: test input vars
+  assert: { that: "{{ item }} is defined" }
+  with_items:
+      - elk_server_private_ip
+      - topbeat_log_path
+      - logstash_forwarder_crt
+  when: topbeat_deploy_config
+  
+- name: Importing the Topbeats public GPG key into rpm
+  rpm_key:
+    state: absent
+    key: "{{ topbeats_rpm_key }}"
+  become: yes
+  
+- name: Creating a new yum repository file for elastic-beats
+  template:
+    src: elastic-beats.repo.j2
+    dest: "/etc/yum.repos.d/{{ elasticbeats_repo_name }}"
+  become: yes
+
+- name: Installing topbeats pkg from repo
+  yum: 
+    name: "{{ topbeats_pkg_name }}"
+    state: present
+  become: yes
+
+- name: Configure topbeat
+  template:
+    src: topbeat.yml.j2
+    dest: "/etc/topbeat/topbeat.yml"
+  become: yes
+
+- name: Configure topbeat-service
+  template:
+    src: topbeat.service.j2
+    dest: "/lib/systemd/system/{{ topbeats_service }}"
+  become: yes
+
+- name: Reload systemctl
+  command: systemctl daemon-reload
+  become: yes
+
+- name: Logrotate configuration file
+  template:
+    src: logrotate.topbeat.j2
+    dest: /etc/logrotate.d/topbeat
+  become: yes
+
+- name: Restart topbeats
+  service:
+    name: "{{ topbeats_service_name }}"
+    state: restarted 
+    enabled: yes
+  become: yes
