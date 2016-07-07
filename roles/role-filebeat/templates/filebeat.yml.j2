@@ -14,7 +14,7 @@ filebeat:
       paths:
         #- {{ filebeat_log_path }}/secure
         #- {{ filebeat_log_path }}/messages
-        - /var/log/*.log
+        - {{ log_fetching_path }}
         #- c:\programdata\elasticsearch\logs\*
 
       # Configure the file encoding for reading files with international characters
