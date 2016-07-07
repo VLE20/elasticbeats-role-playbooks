@@ -5,3 +5,4 @@ elasticbeats_repo_name: elastic-beats.repo
 filebeat_pkg_name: filebeat
 filebeat_service: filebeat.service
 filebeat_service_name: filebeat
+filebeats_baseurl: https://packages.elastic.co/beats/yum/el/$basearch

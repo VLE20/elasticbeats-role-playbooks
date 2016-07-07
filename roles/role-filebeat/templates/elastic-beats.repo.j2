@@ -1,6 +1,6 @@
 [beats]
 name=Elastic Beats Repository
-baseurl=https://packages.elastic.co/beats/yum/el/$basearch
+baseurl={{ filebeats_baseurl }}
 enabled=1
-gpgkey=https://packages.elastic.co/GPG-KEY-elasticsearch
+gpgkey={{ filebeats_rpm_key }}
 gpgcheck=1
