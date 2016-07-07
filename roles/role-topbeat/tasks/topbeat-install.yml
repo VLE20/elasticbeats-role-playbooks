@@ -14,15 +14,14 @@
   assert: { that: "{{ item }} is defined" }
   with_items:
       - elk_server_private_ip
-      - filebeat_log_path
+      - topbeat_log_path
       - logstash_forwarder_crt
-      - log_fetching_path
-  when: filebeat_deploy_config
+  when: topbeat_deploy_config
   
-- name: Importing the FileBeats public GPG key into rpm
+- name: Importing the Topbeats public GPG key into rpm
   rpm_key:
     state: absent
-    key: "{{ filebeats_rpm_key }}"
+    key: "{{ topbeats_rpm_key }}"
   become: yes
   
 - name: Creating a new yum repository file for elastic-beats
@@ -30,38 +29,38 @@
     src: elastic-beats.repo.j2
     dest: "/etc/yum.repos.d/{{ elasticbeats_repo_name }}"
   become: yes
-  
-- name: Installing filebeat pkg from repo
+
+- name: Installing topbeats pkg from repo
   yum: 
-    name: "{{ filebeat_pkg_name }}"
+    name: "{{ topbeats_pkg_name }}"
     state: present
   become: yes
 
-- name: Configure filebeat
+- name: Configure topbeat
   template:
-    src: filebeat.yml.j2
-    dest: "/etc/filebeat/filebeat.yml"
-  become: yes 
-  
-- name: Configure filebeat-service
-  template:
-    src: filebeat.service.j2
-    dest: "/lib/systemd/system/{{ filebeat_service }}"
+    src: topbeat.yml.j2
+    dest: "/etc/topbeat/topbeat.yml"
   become: yes
-  
+
+- name: Configure topbeat-service
+  template:
+    src: topbeat.service.j2
+    dest: "/lib/systemd/system/{{ topbeats_service }}"
+  become: yes
+
 - name: Reload systemctl
   command: systemctl daemon-reload
   become: yes
-  
+
 - name: Logrotate configuration file
   template:
-    src: logrotate.filebeat.j2
-    dest: /etc/logrotate.d/filebeat
-  become: yes  
+    src: logrotate.topbeat.j2
+    dest: /etc/logrotate.d/topbeat
+  become: yes
 
-- name: Restart filebeat
+- name: Restart topbeats
   service:
-    name: "{{ filebeat_service_name }}"
+    name: "{{ topbeats_service_name }}"
     state: restarted 
     enabled: yes
   become: yes
