@@ -2,4 +2,4 @@
 
 - hosts: ELASTIC
   roles:
-   - { role: role-filebeat, elk_server_private_ip: localhost }
+   - { role: role-filebeat, elk_server_private_ip: localhost, filebeat_log_path: /var/log/filebeat-rotate }

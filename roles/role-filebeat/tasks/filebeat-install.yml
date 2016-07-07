@@ -32,16 +32,7 @@
   template:
     src: filebeat.yml.j2
     dest: "/etc/filebeat/filebeat.yml"
-  become: yes
-
-- name: Create log path if not exist
-  file: 
-    path: "{{ filebeat_log_path }}"
-    owner: root
-    group: root
-    state: directory
-    mode: 0775
-  become: yes  
+  become: yes 
   
 - name: Configure filebeat-service
   template:
