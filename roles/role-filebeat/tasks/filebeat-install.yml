@@ -10,6 +10,15 @@
     msg: "This role can only be run on CentOS 7 servers"
   when: ansible_distribution != "CentOS" or (ansible_distribution == "CentOS" and ansible_distribution_major_version != "7")
 
+- name: test input vars
+  assert: { that: "{{ item }} is defined" }
+  with_items:
+      - elk_server_private_ip
+      - filebeat_log_path
+      - logstash_forwarder_crt
+      - log_fetching_path
+  when: filebeat_deploy_config
+  
 - name: Importing the FileBeats public GPG key into rpm
   rpm_key:
     state: absent
