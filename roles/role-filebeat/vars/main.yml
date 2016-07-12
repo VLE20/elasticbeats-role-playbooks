@@ -1,6 +1,6 @@
 ---
 # vars file for role-filebeat
-elasticsearch_rpm_key: http://packages.elastic.co/GPG-KEY-elasticsearch
+filebeats_rpm_key: http://packages.elastic.co/GPG-KEY-elasticsearch
 elasticbeats_repo_name: elastic-beats.repo
 filebeat_pkg_name: filebeat
 filebeat_service: filebeat.service
