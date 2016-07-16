@@ -1,0 +1,63 @@
+---
+
+- name: test input vars
+  assert: { that: "{{ item }} is defined" }
+  with_items:
+      - elasticsearch_url
+      - httpbeat_logpath
+      - binary_path
+  when: httpbeat_deploy_config
+
+- name: Create log path 
+  file:
+    path: "{{ httpbeat_configfile_path }}"
+    state: directory
+    mode: 0750
+  become: yes
+
+- name: Configuring httpbeat
+  template:
+    src: httpbeat.yml.j2
+    dest: "{{ httpbeat_configfile_path }}/{{ httpbeat_fileconf_name }}"
+  become: yes
+
+- name: Adding template file for indexing in  ElasticSearch
+  template:
+    src: httpbeat.template.json.j2
+    dest: "{{ httpbeat_configfile_path }}/{{ httpbeat_template_name }}"
+  become: yes
+
+- name: Creating index in ElasticSearch from template
+  command: "curl -XPUT 'http://localhost:9200' -d@{{ httpbeat_configfile_path }}/{{ httpbeat_template_name }}"
+  become: yes
+
+- name: Creating systemd file for httpbeat.service
+  template:
+    src: httpbeat.service.j2
+    dest: "/lib/systemd/system/{{ httpbeat_service }}"
+  become: yes
+
+- name: Reload systemctl
+  command: systemctl daemon-reload
+  become: yes
+
+- name: Logrotate configuration file
+  template:
+    src: logrotate.httpbeat.j2
+    dest: /etc/logrotate.d/httpbeat
+  become: yes
+
+
+- name: Copying httpbeat compiled file
+  copy:
+    src: httpbeat
+    dest: "{{ binary_path }}"
+    mode: a+rx
+  become: yes
+
+- name: Starting service httpbeat
+  service:
+    name: httpbeat
+    state: restarted
+    enabled: yes
+  become: yes

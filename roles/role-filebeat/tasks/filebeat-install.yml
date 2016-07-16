@@ -16,7 +16,7 @@
       - elk_server_private_ip
       - filebeat_log_path
       - logstash_forwarder_crt
-      - log_fetching_path
+      - log_fetching_paths
   when: filebeat_deploy_config
   
 - name: Importing the FileBeats public GPG key into rpm

@@ -1,20 +1,4 @@
 ---
 # tasks file for role-filebeats
 
-- name: Importing the FileBeats public GPG key into rpm
-  rpm_key:
-    state: absent
-    key: "{{ filebeats_gpg_key }}"
-  become: yes
-
-- name: Creating a new yum repository file for FileBeats
-  template:
-    src: filebeats.repo.j2
-    dest: "/etc/yum.repos.d/{{ filebeats_repo_name }}"
-  become: yes
-
-- name: Installing FileBeats pkg from repo
-  yum:
-    name: "{{ filebeats_pkg_name }}"
-    state: present
-  become: yes
+- include: filebeat-install.yml

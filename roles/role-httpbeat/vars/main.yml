@@ -1,0 +1,12 @@
+---
+# vars file for role-httpbeat
+httpbeat_configfile_path: /etc/httpbeat
+httpbeat_fileconf_name: httpbeat.yml
+httpbeat_template_name: httpbeat.template.json
+httpbeat_service: httpbeat.service
+httpbeat_tocheck_url: http://localhost
+#elasticsearch_url: localhost:9200
+#httpbeat_logpath: /tmp/log/httpbeat
+httpbeat_logfile_name: httpbeat.log
+#binary_path: /usr/bin/httpbeat
+
