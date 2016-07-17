@@ -1,6 +1,6 @@
 ---
 
-- name: test input vars
+- name: Testing input vars
   assert: { that: "{{ item }} is defined" }
   with_items:
       - elasticsearch_url
@@ -8,7 +8,7 @@
       - binary_path
   when: httpbeat_deploy_config
 
-- name: Create log path 
+- name: Creating file config path 
   file:
     path: "{{ httpbeat_configfile_path }}"
     state: directory
@@ -28,7 +28,7 @@
   become: yes
 
 - name: Creating index in ElasticSearch from template
-  command: "curl -XPUT 'http://localhost:9200' -d@{{ httpbeat_configfile_path }}/{{ httpbeat_template_name }}"
+  command: "curl -XPUT 'http://{{ elasticsearch_url }}' -d@{{ httpbeat_configfile_path }}/{{ httpbeat_template_name }}"
   become: yes
 
 - name: Creating systemd file for httpbeat.service
@@ -37,7 +37,7 @@
     dest: "/lib/systemd/system/{{ httpbeat_service }}"
   become: yes
 
-- name: Reload systemctl
+- name: Reloading systemctl
   command: systemctl daemon-reload
   become: yes
 

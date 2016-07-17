@@ -2,6 +2,7 @@
 
 - hosts: ELASTIC
   roles:
-   - { role: role-filebeat, elk_server_private_ip: localhost, filebeat_log_path: /var/log/filebeat-rotate, logstash_forwarder_crt: /etc/pki/tls/certs/logstash-forwarder.crt, log_fetching_paths: ["- /var/log/nginx/*.log", "- /var/log/*.log","- /var/log/redis/*.log"], filebeat_deploy_config: false }
+   - { role: role-filebeat, elk_server_private_ip: localhost, filebeat_log_path: /var/log/filebeat-rotate, logstash_forwarder_crt: /etc/pki/tls/certs/logstash-forwarder.crt, log_fetching_paths: ["- /var/log/nginx/*.log", "- /var/log/*.log","- /var/log/redis/*.log"], filebeat_deploy_config: true }
    - { role: role-topbeat, elk_server_private_ip: localhost, topbeat_log_path: /var/log/topbeat-rotate, logstash_forwarder_crt: /etc/pki/tls/certs/logstash-forwarder.crt, topbeat_deploy_config: true }
    - { role: role-httpbeat, elasticsearch_url: 'localhost:9200', httpbeat_logpath: /tmp/log/httpbeat, binary_path: /usr/bin/httpbeat, httpbeat_deploy_config: true }
+   - { role: role-redisbeat, elasticsearch_url: 'localhost:9200', redisbeat_logpath: /tmp/log/redisbeat, binary_path: /usr/bin/redisbeat, redisbeat_deploy_config: true }

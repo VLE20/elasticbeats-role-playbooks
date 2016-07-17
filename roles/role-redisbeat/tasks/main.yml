@@ -1,0 +1,3 @@
+---
+# tasks file for role-redisbeat
+- include: redisbeat-install.yml
