@@ -1,0 +1,11 @@
+---
+# vars file for role-redisbeat
+redisbeat_configfile_path: /etc/redisbeat
+redisbeat_fileconf_name: redisbeat.yml
+redisbeat_template_name: redisbeat.template.json
+redisbeat_service: redisbeat.service
+#elasticsearch_url: localhost:9200
+#redisbeat_logpath: /tmp/log/redisbeat
+redisbeat_logfile_name: redisbeat.log
+#binary_path: /usr/bin/redisbeat
+

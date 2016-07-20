@@ -1,0 +1,64 @@
+---
+
+- name: Testing input vars
+  assert: { that: "{{ item }} is defined" }
+  with_items:
+      - elasticsearch_url
+      - redisbeat_logpath
+      - binary_path
+  when: redisbeat_deploy_config
+
+- name: Creating file config path
+  file:
+    path: "{{ redisbeat_configfile_path }}"
+    state: directory
+    mode: 0750
+  become: yes
+
+- name: Configuring redisbeat
+  template:
+    src: redisbeat.yml.j2
+    dest: "{{ redisbeat_configfile_path }}/{{ redisbeat_fileconf_name }}"
+  become: yes
+
+- name: Adding template file for indexing in  ElasticSearch
+  template:
+    src: redisbeat.template.json.j2
+    dest: "{{ redisbeat_configfile_path }}/{{ redisbeat_template_name }}"
+  become: yes
+
+- name: Creating index in ElasticSearch from template
+  command: "curl -XPUT 'http://{{ elasticsearch_url }}' -d@{{ redisbeat_configfile_path }}/{{ redisbeat_template_name }}"
+  become: yes
+
+- name: Creating systemd file for redisbeat.service
+  template:
+    src: redisbeat.service.j2
+    dest: "/lib/systemd/system/{{ redisbeat_service }}"
+  become: yes
+
+- name: Reload systemctl
+  command: systemctl daemon-reload
+  become: yes
+
+- name: Logrotate configuration file
+  template:
+    src: logrotate.redisbeat.j2
+    dest: /etc/logrotate.d/redisbeat
+  become: yes
+
+
+- name: Copying redisbeat compiled file
+  copy:
+    src: redisbeat
+    dest: "{{ binary_path }}"
+    mode: a+rx
+  become: yes
+
+- name: Starting service redisbeat
+  service:
+    name: redisbeat
+    state: restarted
+    enabled: yes
+  become: yes
+
