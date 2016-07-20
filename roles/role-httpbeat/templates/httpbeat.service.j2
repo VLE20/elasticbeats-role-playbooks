@@ -1,0 +1,12 @@
+[Unit]
+Description=httpbeat
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+ExecStart={{ binary_path }} -c {{ httpbeat_configfile_path }}/{{ httpbeat_fileconf_name }}
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+

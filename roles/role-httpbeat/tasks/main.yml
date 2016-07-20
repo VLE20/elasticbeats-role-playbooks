@@ -1,0 +1,3 @@
+---
+# tasks file for role-httpbeat
+- include: httpbeat-install.yml

@@ -1,3 +1,4 @@
 ---
-# tasks file for role-elasticsearch
+# tasks file for role-filebeats
+
 - include: filebeat-install.yml
