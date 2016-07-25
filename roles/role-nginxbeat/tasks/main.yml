@@ -1,0 +1,3 @@
+---
+# tasks file for role-nginxbeat
+- include: nginxbeat-install.yml

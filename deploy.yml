@@ -1,8 +1,19 @@
 ---
+#####ATTENTION####
+#Nginxbeat remonte les metrics grace au module stub (non activé par défaut)
+#Il faut donc l'activer dans /etc/nginx/conf.d/default.conf en ajoutant :
+#location /status {
+#    stub_status on;
+#    access_log   off;
+#    allow 192.168.56.102;  #exemple d'adresse autorisée a accéder à /status
+#    allow 127.0.0.1;    #de même
+#    deny all;
+#}
 
-- hosts: ELASTIC
+- hosts: ELASTICBEATS
   roles:
-   - { role: role-filebeat, elk_server_private_ip: localhost, filebeat_log_path: /var/log/filebeat-rotate, logstash_forwarder_crt: /etc/pki/tls/certs/logstash-forwarder.crt, log_fetching_paths: ["- /var/log/nginx/*.log", "- /var/log/*.log","- /var/log/redis/*.log"], filebeat_deploy_config: true }
-   - { role: role-topbeat, elk_server_private_ip: localhost, topbeat_log_path: /var/log/topbeat-rotate, logstash_forwarder_crt: /etc/pki/tls/certs/logstash-forwarder.crt, topbeat_deploy_config: true }
-   - { role: role-httpbeat, elasticsearch_url: 'localhost:9200', httpbeat_logpath: /tmp/log/httpbeat, binary_path: /usr/bin/httpbeat, httpbeat_deploy_config: true }
-   - { role: role-redisbeat, elasticsearch_url: 'localhost:9200', redisbeat_logpath: /tmp/log/redisbeat, binary_path: /usr/bin/redisbeat, redisbeat_deploy_config: true }
+   - { role: role-filebeat, elk_host: "{{ groups['ELASTIC'][0] }}", filebeat_log_path: /var/log/filebeat-rotate, logstash_forwarder_crt: /etc/pki/tls/certs/logstash-forwarder.crt, log_fetching_paths: ["- /var/log/nginx/*.log", "- /var/log/*.log","- /var/log/redis/*.log"], filebeat_deploy_config: true }
+   - { role: role-topbeat, elk_host: "{{ groups['ELASTIC'][0] }}", topbeat_log_path: /var/log/topbeat-rotate, logstash_forwarder_crt: /etc/pki/tls/certs/logstash-forwarder.crt, topbeat_deploy_config: true }
+   - { role: role-httpbeat, elk_host: "{{ groups['ELASTIC'][0] }}", httpbeat_logpath: /tmp/log/httpbeat, binary_path: /usr/bin/httpbeat, httpbeat_deploy_config: true }
+   - { role: role-redisbeat, elk_host: "{{ groups['ELASTIC'][0] }}", redisbeat_logpath: /tmp/log/redisbeat, binary_path: /usr/bin/redisbeat, redisbeat_deploy_config: true }
+   - { role: role-nginxbeat, nginx_statuspage_urls: ["http://{{ groups['ELASTICBEATS'][0] }}/status","http://127.0.0.1/status"], elk_host: "{{ groups['ELASTIC'][0] }}", nginxbeat_logpath: /tmp/log/nginxbeat, binary_path: /usr/bin/nginxbeat, nginxbeat_deploy_config: true }

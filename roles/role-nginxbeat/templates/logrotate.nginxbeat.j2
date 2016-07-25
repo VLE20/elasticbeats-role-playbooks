@@ -1,0 +1,11 @@
+{{ nginxbeat_logpath }}/* {
+    hourly
+    rotate 100
+    size 50M
+    copytruncate
+    compress
+    delaycompress
+    missingok
+    notifempty
+}
+

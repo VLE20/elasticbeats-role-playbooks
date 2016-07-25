@@ -1,0 +1,65 @@
+---
+
+- name: Testing input vars
+  assert: { that: "{{ item }} is defined" }
+  with_items:
+      - nginx_statuspage_urls
+      - elk_host
+      - nginxbeat_logpath
+      - binary_path
+  when: nginxbeat_deploy_config
+
+- name: Creating file config path
+  file:
+    path: "{{ nginxbeat_configfile_path }}"
+    state: directory
+    mode: 0750
+  become: yes
+
+- name: Configuring nginxbeat
+  template:
+    src: nginxbeat.yml.j2
+    dest: "{{ nginxbeat_configfile_path }}/{{ nginxbeat_fileconf_name }}"
+  become: yes
+
+- name: Adding template file for indexing in  ElasticSearch
+  template:
+    src: nginxbeat.template.json.j2
+    dest: "{{ nginxbeat_configfile_path }}/{{ nginxbeat_template_name }}"
+  become: yes
+
+- name: Creating index in ElasticSearch from template
+  command: "curl -XPUT 'http://{{ elk_host }}:9200' -d@{{ nginxbeat_configfile_path }}/{{ nginxbeat_template_name }}"
+  become: yes
+
+- name: Creating systemd file for nginxbeat.service
+  template:
+    src: nginxbeat.service.j2
+    dest: "/lib/systemd/system/{{ nginxbeat_service }}"
+  become: yes
+
+- name: Reload systemctl
+  command: systemctl daemon-reload
+  become: yes
+
+- name: Logrotate configuration file
+  template:
+    src: logrotate.nginxbeat.j2
+    dest: /etc/logrotate.d/nginxbeat
+  become: yes
+
+
+- name: Copying nginxbeat compiled file
+  copy:
+    src: nginxbeat
+    dest: "{{ binary_path }}"
+    mode: a+rx
+  become: yes
+
+- name: Starting service nginxbeat
+  service:
+    name: nginxbeat
+    state: restarted
+    enabled: yes
+  become: yes
+

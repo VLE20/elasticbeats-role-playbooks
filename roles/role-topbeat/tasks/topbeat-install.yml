@@ -13,7 +13,7 @@
 - name: test input vars
   assert: { that: "{{ item }} is defined" }
   with_items:
-      - elk_server_private_ip
+      - elk_host
       - topbeat_log_path
       - logstash_forwarder_crt
   when: topbeat_deploy_config

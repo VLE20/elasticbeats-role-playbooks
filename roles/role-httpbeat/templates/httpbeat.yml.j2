@@ -108,9 +108,9 @@ output:
   # Elasticsearch as output
   # Options:
   # host, port: where Elasticsearch is listening on
-  elasticsearch:
+  #elasticsearch:
     #enabled: true
-    hosts: ["{{ elasticsearch_url }}"]
+    #hosts: ["{{ elk_host }}"]
 
   # Redis as output
   # Options:
@@ -119,7 +119,8 @@ output:
   #  enabled: true
   #  host: localhost
   #  port: 6379
-
+  logstash:
+    hosts: ["{{ elk_host }}:5044"]
   # File as output
   # Options:
   # path: where to save the files
