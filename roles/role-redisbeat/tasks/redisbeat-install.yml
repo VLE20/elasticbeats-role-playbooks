@@ -3,7 +3,7 @@
 - name: Testing input vars
   assert: { that: "{{ item }} is defined" }
   with_items:
-      - elasticsearch_url
+      - elk_host
       - redisbeat_logpath
       - binary_path
   when: redisbeat_deploy_config
@@ -28,7 +28,7 @@
   become: yes
 
 - name: Creating index in ElasticSearch from template
-  command: "curl -XPUT 'http://{{ elasticsearch_url }}' -d@{{ redisbeat_configfile_path }}/{{ redisbeat_template_name }}"
+  command: "curl -XPUT 'http://{{ elk_host }}:9200' -d@{{ redisbeat_configfile_path }}/{{ redisbeat_template_name }}"
   become: yes
 
 - name: Creating systemd file for redisbeat.service

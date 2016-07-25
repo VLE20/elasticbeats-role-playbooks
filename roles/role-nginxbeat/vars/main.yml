@@ -1,0 +1,11 @@
+---
+# vars file for role-nginxbeat
+nginxbeat_configfile_path: /etc/nginxbeat
+nginxbeat_fileconf_name: nginxbeat.yml
+nginxbeat_template_name: nginxbeat.template.json
+nginxbeat_service: nginxbeat.service
+#elasticsearch_url: localhost:9200
+#nginxbeat_logpath: /tmp/log/nginxbeat
+nginxbeat_logfile_name: nginxbeat.log
+#binary_path: /usr/bin/nginxbeat
+
